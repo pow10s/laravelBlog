@@ -10,15 +10,19 @@
 | and give it the controller to call when that URI is requested.
 |
 */
+
+
+
 Route::group(array('before' => 'auth|nohttps'), function()
 {
+    Route::get('/', function () {
+        return view('welcome');
+    });
+    Route::auth();
+    Route::get('/home', 'HomeController@index');
 
-Route::get('/', function () {
-    return view('welcome');
 });
 
-Route::auth();
-
-Route::get('/home', 'HomeController@index');
-
+Route::filter('nohttps', function() {
+    if (Request::secure()) {return Redirect::to('http://' . Request::url());}
 });
