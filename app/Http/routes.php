@@ -11,18 +11,10 @@
 |
 */
 
-
-
-Route::group(array('before' => 'auth|nohttps'), function()
-{
-    Route::get('/', function () {
-        return view('welcome');
-    });
-    Route::auth();
-    Route::get('/home', 'HomeController@index');
-
+Route::get('/', function () {
+    return view('welcome');
 });
 
-Route::filter('nohttps', function() {
-    if (Request::secure()) {return Redirect::to('http://' . Request::url());}
-});
+Route::auth();
+
+Route::get('/home', 'HomeController@index');
