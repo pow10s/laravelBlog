@@ -18,7 +18,6 @@ class ArticleController extends Controller
 
     public function show($id)
     {
-        $this->authorize('show');
         $article = Article::find($id);
         return view('show', ['article' => $article]);
     }
