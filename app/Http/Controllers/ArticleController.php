@@ -24,9 +24,11 @@ class ArticleController extends Controller
 
     public function create()
     {
+
         $this->authorize('create');
         return view('create');
     }
+
 
     public function store(Request $request)
     {
@@ -34,12 +36,19 @@ class ArticleController extends Controller
         return redirect('/articles');
     }
 
+    public function upload()
+    {
+
+    }
+
+
     public function edit($id)
     {
         $this->authorize('edit');
         $article = Article::find($id);
         return view('edit', ['article' => $article]);
     }
+
 
     public function update(Request $request, $id)
     {
