@@ -42,6 +42,15 @@ class ArticleController extends Controller
         return view('edit', ['article' => $article]);
     }
 
+    public function update(Request $request, $id)
+    {
+        $article = Article::find($id);
+        $article->title = $request->title;
+        $article->content = $request->content;
+        $article->save();
+        return redirect('/articles');
+    }
+
     public function delete($id)
     {
         $this->authorize('delete');
