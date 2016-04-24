@@ -29,9 +29,6 @@ class AuthServiceProvider extends ServiceProvider
         $gate->define('create', function ($user) {
             return $user->name == 'admin' or $user->name =='user';
         });
-        $gate->define('show', function ($user) {
-            return $user->name == 'user' || $user->name == 'admin' || $user->name =='guest';
-        });
         $gate->define('edit', function ($user) {
             return $user->name == 'admin';
         });
