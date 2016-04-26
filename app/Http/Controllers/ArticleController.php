@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Article;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Intervention\Image;
 
 class ArticleController extends Controller
 {
@@ -29,18 +30,17 @@ class ArticleController extends Controller
         return view('create');
     }
 
+    public function upload()
+    {
+
+    }
+
 
     public function store(Request $request)
     {
         Article::create($request->all());
         return redirect('/articles');
     }
-
-    public function upload()
-    {
-
-    }
-
 
     public function edit($id)
     {

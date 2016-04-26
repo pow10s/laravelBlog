@@ -1,0 +1,1 @@
+For end register, please go to link<a href="laravelblog.dev/register/confirm/{{$token}}"> Click</a>
