@@ -12,6 +12,11 @@ class AdvancedReg extends Controller
 {
     public function register(Request $request)
     {
+        $this->validate($request, [
+            'name' => 'required|unique:users|min:6|max:100',
+            'email' => 'required|unique:users|max:250|unique:confirm_users|email',
+            'password' => 'required|confirmed|min:6'
+        ]);
         $user = User::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
