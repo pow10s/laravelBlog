@@ -14,7 +14,7 @@
 Route::get('/', function () {
     return view('welcome');
 });
-
+//Auth routing
 Route::auth();
 Route::post('/register','AdvancedReg@register');
 Route::get('register/confirm/{token}','AdvancedReg@confirm');
@@ -29,3 +29,11 @@ Route::get('/delete/{id}', 'ArticleController@delete');
 Route::post('/store', 'ArticleController@store');
 Route::get('/show/{id}', 'ArticleController@show');
 Route::post('/store', 'ArticleController@store');
+
+//Repeat link routing
+Route::get('/repeat_confirm','AdvancedReg@getRepeat');
+Route::post('/repeat_confirm','AdvancedReg@postRepeat');
+
+//Validator
+
+Route::post('/login', 'Auth\MyAuth@auth');
