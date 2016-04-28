@@ -31,7 +31,7 @@ Route::get('/show/{id}', 'ArticleController@show');
 Route::post('/store', 'ArticleController@store');
 
 //Repeat link routing
-Route::get('/repeat_confirm','AdvancedReg@getRepeat');
+Route::get('repeat_confirm','AdvancedReg@getRepeat');
 Route::post('/repeat_confirm','AdvancedReg@postRepeat');
 
 //Validator

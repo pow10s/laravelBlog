@@ -71,16 +71,16 @@ class AdvancedReg extends Controller
     {
         $user = User::where('email', '=', $request->input('email'))->first();
         if (!empty($user->email)) {
-            if ($user->status == '0') {
+            if ($user->status == 0) {
                 $user->touch();
-                $confirm = ConfirmUsers::where('email', '=', $request->input('Email'))->first();
+                $confirm = ConfirmUsers::where('Email', '=', $request->input('email'))->first();
                 $confirm->touch();
-                Mail::send('emails.confirm', ['token' => $confirm->token],
-                    function ($u) use ($user) //отправляем письмо пользователю
+                Mail::send('email.confirm', ['token' => $confirm->token],
+                    function ($u) use ($user)
                     {
                         $u->from('admin@site.ru');
                         $u->to($user->email);
-                        $u->subject('Подтверждение email');
+                        $u->subject('Submitting E-mail');
                     });
                 return back()->with('message',
                     'Letter to activate successfully sent to the specified address');
