@@ -92,11 +92,11 @@ class AdvancedReg extends Controller
         $model = ConfirmUsers::where('token', '=', $token)->firstOrFail();
         $user = User::where('email', '=', $model->Email)->first();
         $user->status = 1;
+        $userId = User::find($user->id);
+        $userId->attachRole('Author');
         $user->save();
         $model->delete();
-        $userId = $user->id;
 
-        $userId->attachRole('Author');
         return view('auth.login');
     }
 
