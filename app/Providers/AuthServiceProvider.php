@@ -23,17 +23,4 @@ class AuthServiceProvider extends ServiceProvider
      * @param  \Illuminate\Contracts\Auth\Access\Gate $gate
      * @return void
      */
-    public function boot(GateContract $gate)
-    {
-        $this->registerPolicies($gate);
-        $gate->define('create', function ($user) {
-            return $user->name == 'admin' or $user->name =='user';
-        });
-        $gate->define('edit', function ($user) {
-            return $user->name == 'admin';
-        });
-        $gate->define('delete', function ($user) {
-            return $user->name == 'admin';
-        });
-    }
 }

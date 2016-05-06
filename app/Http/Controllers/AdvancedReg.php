@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Permission;
+use App\Role;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\User;
@@ -10,6 +12,39 @@ use Illuminate\Support\Facades\Mail;
 
 class AdvancedReg extends Controller
 {
+    public function createRoles()
+    {
+        $guest = new Role();
+        $guest->name = 'Guest';
+        $guest->save();
+
+        $author = new Role();
+        $author->name = 'Author';
+        $author->save();
+
+        $admin = new Role();
+        $admin->name = 'Admin';
+        $admin->save();
+
+        $read = new Permission();
+        $read->name = 'can_read';
+        $read->display_name = 'Can read posts';
+        $read->save();
+
+        $edit = new Permission();
+        $edit->name = 'can_edit';
+        $edit->display_name = 'Can edit posts';
+        $edit->save();
+
+        $guest->attachPermission($read);
+        $author->attachPermission($read, $edit);
+        $admin->attachPermission($read, $edit);
+
+        $user = User::find(39);
+        $user->attachRole($admin);
+
+    }
+
     public function register(Request $request)
     {
         $this->validate($request, [
@@ -59,6 +94,9 @@ class AdvancedReg extends Controller
         $user->status = 1;
         $user->save();
         $model->delete();
+        $userId = $user->id;
+
+        $userId->attachRole('Author');
         return view('auth.login');
     }
 
@@ -76,8 +114,7 @@ class AdvancedReg extends Controller
                 $confirm = ConfirmUsers::where('Email', '=', $request->input('email'))->first();
                 $confirm->touch();
                 Mail::send('email.confirm', ['token' => $confirm->token],
-                    function ($u) use ($user)
-                    {
+                    function ($u) use ($user) {
                         $u->from('admin@site.ru');
                         $u->to($user->email);
                         $u->subject('Submitting E-mail');

@@ -37,3 +37,7 @@ Route::post('/repeat_confirm','AdvancedReg@postRepeat');
 //Validator
 
 Route::post('/login', 'Auth\MyAuth@auth');
+
+//Roles
+
+Route::get('roles','AdvancedReg@createRoles');

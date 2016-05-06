@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\User;
 use App\Article;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Intervention\Image;
 
 class ArticleController extends Controller
@@ -19,22 +21,20 @@ class ArticleController extends Controller
 
     public function show($id)
     {
-        $article = Article::find($id);
-        return view('show', ['article' => $article]);
+        $user = Auth::user();
+        if ($user->hasRole('Admin') || $user->hasRole('Author')) {
+            $article = Article::find($id);
+            return view('show', ['article' => $article]);
+        }
     }
 
     public function create()
     {
-
-        $this->authorize('create');
-        return view('create');
+        $user = Auth::user();
+        if ($user->hasRole('Admin') || $user->hasRole('Author')) {
+            return view('create');
+        }
     }
-
-    public function upload()
-    {
-
-    }
-
 
     public function store(Request $request)
     {
@@ -44,9 +44,12 @@ class ArticleController extends Controller
 
     public function edit($id)
     {
-        $this->authorize('edit');
-        $article = Article::find($id);
-        return view('edit', ['article' => $article]);
+        $user = Auth::user();
+        if ($user->hasRole('Admin')) {
+            $article = Article::find($id);
+            return view('edit', ['article' => $article]);
+        }
+        return 'You dont have permissions';
     }
 
 
@@ -61,11 +64,11 @@ class ArticleController extends Controller
 
     public function delete($id)
     {
-        $this->authorize('delete');
-        $article = Article::find($id);
-        $article->delete();
-        return redirect('/articles');
-
-
+        $user = Auth::user();
+        if ($user->hasRole('Admin')) {
+            $article = Article::find($id);
+            $article->delete();
+            return redirect('/articles');
+        }
     }
 }

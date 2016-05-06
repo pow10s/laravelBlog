@@ -147,6 +147,8 @@ return [
         App\Providers\RouteServiceProvider::class,
         //Intervention
         Intervention\Image\ImageServiceProvider::class,
+        //Zizaco
+        Zizaco\Entrust\EntrustServiceProvider::class,
 
     ],
     /*
@@ -194,6 +196,8 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         //Intervention
         'Image' => Intervention\Image\Facades\Image::class,
+        //Zizaco
+        'Entrust' => Zizaco\Entrust\EntrustFacade::class,
 
     ],
 
