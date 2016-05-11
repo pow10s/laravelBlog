@@ -55,11 +55,15 @@ class ArticleController extends Controller
 
     public function update(Request $request, $id)
     {
-        $article = Article::find($id);
-        $article->title = $request->title;
-        $article->content = $request->content;
-        $article->save();
-        return redirect('/articles');
+        $user = Auth::user();
+        if ($user->hasRole('Admin')) {
+            $article = Article::find($id);
+            $article->title = $request->title;
+            $article->content = $request->content;
+            $article->save();
+            return redirect('/articles');
+        }
+        return 'You dont have permissions';
     }
 
     public function delete($id)

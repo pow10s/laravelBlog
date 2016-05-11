@@ -93,7 +93,7 @@ class AdvancedReg extends Controller
         $user = User::where('email', '=', $model->Email)->first();
         $user->status = 1;
         $userId = User::find($user->id);
-        $userId->attachRole('Author');
+        $userId->attachRole('14');
         $user->save();
         $model->delete();
 
