@@ -22,7 +22,7 @@ class ArticleController extends Controller
     public function show($id)
     {
         $user = Auth::user();
-        if ($user->hasRole('Admin') || $user->hasRole('Author')) {
+        if ($user->can('can_read')) {
             $article = Article::find($id);
             return view('show', ['article' => $article]);
         }
@@ -31,7 +31,7 @@ class ArticleController extends Controller
     public function create()
     {
         $user = Auth::user();
-        if ($user->hasRole('Admin') || $user->hasRole('Author')) {
+        if ($user->can('can_edit')) {
             return view('create');
         }
     }
@@ -45,7 +45,7 @@ class ArticleController extends Controller
     public function edit($id)
     {
         $user = Auth::user();
-        if ($user->hasRole('Admin')) {
+        if ($user->can('can_edit')) {
             $article = Article::find($id);
             return view('edit', ['article' => $article]);
         }
@@ -56,7 +56,7 @@ class ArticleController extends Controller
     public function update(Request $request, $id)
     {
         $user = Auth::user();
-        if ($user->hasRole('Admin')) {
+        if ($user->can('can_edit')) {
             $article = Article::find($id);
             $article->title = $request->title;
             $article->content = $request->content;
@@ -69,7 +69,7 @@ class ArticleController extends Controller
     public function delete($id)
     {
         $user = Auth::user();
-        if ($user->hasRole('Admin')) {
+        if ($user->can('can_edit')) {
             $article = Article::find($id);
             $article->delete();
             return redirect('/articles');

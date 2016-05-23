@@ -79,12 +79,7 @@
             </div>
         </div>
     </div>
-    @if (count($errors) > 0)
-        <div>Ooooops, error</div>
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
+    @if($errors->any())
+        <h4>{{$errors->first()}}</h4>
     @endif
 @endsection

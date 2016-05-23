@@ -9,6 +9,8 @@ use App\Http\Requests;
 use App\User;
 use App\ConfirmUsers;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class AdvancedReg extends Controller
 {
@@ -37,27 +39,38 @@ class AdvancedReg extends Controller
         $edit->save();
 
         $guest->attachPermission($read);
-        $author->attachPermission($read, $edit);
-        $admin->attachPermission($read, $edit);
-
-        $user = User::find(39);
-        $user->attachRole($admin);
+        $author->attachPermission($read);
+        $author->attachPermission($edit);
+        $admin->attachPermission($read);
+        $admin->attachPermission($edit);
+        /*
+                $user = User::find(39);
+                $user->attachRole($admin);*/
 
     }
 
     public function register(Request $request)
     {
         $this->validate($request, [
-            'name' => 'required|unique:users|min:6|max:100',
+            'name' => 'required|min:6|max:100',
             'email' => 'required|max:250|email',
             'password' => 'required|confirmed|min:6'
         ]);
-        $user = User::create([
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'password' => bcrypt($request->input('password')),
-        ]);
-
+        $user = User::where('email', '=', $request->input('email'))->first();
+        if (!empty($user->email)) {
+            if ($user->status == '0') {
+                return 'This email was registered but not submitted. Please, check your e-mail or ask for
+                <a href="/repeat_confirm">Repeat link</a>';
+            } else {
+                return Redirect::back()->withErrors(['msg' => "User with current e-mail was registered. Forgot your password?"]);
+            }
+        } else {
+            $user = User::create([
+                'name' => $request->input('name'),
+                'email' => $request->input('email'),
+                'password' => bcrypt($request->input('password')),
+            ]);
+        }
         if ($user) {
             $email = $user->email;
             $token = str_random(32);
@@ -71,19 +84,9 @@ class AdvancedReg extends Controller
                 $u->to($user->email);
                 $u->subject('Confirm registration');
             });
-            return back()->with('message',
-                'Allright.Please confirm: <a href="/register/confirm/' . $token . '">Link</a>');
+            return Redirect::back()->withErrors(['msg' => 'Allright.Please confirm letter sended into your e-mail']);
         } else {
-            return back()->withErrors('message', 'Something going wrong');
-        }
-        $user = User::where('email', '=', $request->input('email'))->first();
-        if (!empty($user->email)) {
-            if ($user->status == '0') {
-                return 'This email was registered but not submitted. Please, check your e-mail or ask for
-                <a href="/repeat_confirm">Repeat link</a>';
-            } else {
-                return "User with current e-mail was registered. Forgot your password?";
-            }
+            return Redirect::back()->withErrors(['msg' => "Something going wrong"]);
         }
     }
 
@@ -91,13 +94,12 @@ class AdvancedReg extends Controller
     {
         $model = ConfirmUsers::where('token', '=', $token)->firstOrFail();
         $user = User::where('email', '=', $model->Email)->first();
-        $user->status = 1;
+        $user->status = config('const.USER_STATUS_ACTIVATED');
         $userId = User::find($user->id);
-        $userId->attachRole('14');
+        $userId->attachRole(config('const.ROLE_AUTHOR'));
         $user->save();
         $model->delete();
-
-        return view('auth.login');
+        return redirect('login');
     }
 
     public function getRepeat()
