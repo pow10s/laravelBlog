@@ -58,9 +58,8 @@ class AdvancedReg extends Controller
         ]);
         $user = User::where('email', '=', $request->input('email'))->first();
         if (!empty($user->email)) {
-            if ($user->status == '0') {
-                return 'This email was registered but not submitted. Please, check your e-mail or ask for
-                <a href="/repeat_confirm">Repeat link</a>';
+            if ($user->status == config('const.USER_STATUS_NOT_ACTIVATED')) {
+                return view('errors.repeat');
             } else {
                 return Redirect::back()->withErrors(['msg' => "User with current e-mail was registered. Forgot your password?"]);
             }
@@ -80,7 +79,7 @@ class AdvancedReg extends Controller
             $model->save();
 
             Mail::send('email.confirm', ['token' => $token], function ($u) use ($user) {
-                $u->from('stosdima@gmail.com');
+                $u->from(config('const.EMAIL_ADMIN'));
                 $u->to($user->email);
                 $u->subject('Confirm registration');
             });
@@ -92,14 +91,19 @@ class AdvancedReg extends Controller
 
     public function confirm($token)
     {
-        $model = ConfirmUsers::where('token', '=', $token)->firstOrFail();
-        $user = User::where('email', '=', $model->Email)->first();
-        $user->status = config('const.USER_STATUS_ACTIVATED');
-        $userId = User::find($user->id);
-        $userId->attachRole(config('const.ROLE_AUTHOR'));
-        $user->save();
-        $model->delete();
-        return redirect('login');
+
+        $model = ConfirmUsers::where('token', '=', $token)->first();
+        if(isset($model->token)) {
+            $user = User::where('email', '=', $model->Email)->first();
+            $user->status = config('const.USER_STATUS_ACTIVATED');
+            $userId = User::find($user->id);
+            $userId->attachRole(config('const.ROLE_AUTHOR'));
+            $user->save();
+            $model->delete();
+            return redirect('login');
+        }else{
+            return'already confrmed';
+        }
     }
 
     public function getRepeat()

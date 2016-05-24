@@ -5,4 +5,5 @@ return [
     'ROLE_GUEST' => '23',
     'ROLE_AUTHOR' => '24',
     'ROLE_ADMIN' => '25',
+    'EMAIL_ADMIN' =>'stosdima@gmail.com'
 ];
